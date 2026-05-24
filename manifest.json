@@ -1,0 +1,8 @@
+{
+  "name": "Self Intro Generator",
+  "short_name": "self-intro-g",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1"
+}
