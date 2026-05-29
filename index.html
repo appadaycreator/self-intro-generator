@@ -10,7 +10,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#6366f1" />
+<meta name="theme-color" content="#6366F1" />
     <title>自己紹介文ジェネレーター【無料】無料Webツール</title>
     <meta name="description" content="経歴・強み・目標を入力するだけで就活・転職・SNS用の自己紹介文を自動生成。登録不要・完全無料でご利用いただけます。">
     <link rel="canonical" href="https://appadaycreator.com/self-intro-generator/">
@@ -22,10 +22,11 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
     <meta property="og:locale" content="ja_JP">
     <meta property="og:image" content="https://appadaycreator.com/assets/ogp-default.png">
 <meta property="og:site_name" content="appadaycreator" />
-<meta name="twitter:image" content="https://appadaycreator.com/assets/ogp-default.png" />
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自己紹介文ジェネレーター【無料】無料Webツール" />
 <meta name="twitter:description" content="経歴・強み・目標を入力するだけで就活・転職・SNS用の自己紹介文を自動生成。登録不要・完全無料でご利用いただけます。" />
-    <meta name="twitter:card" content="summary">
-    
+<meta name="twitter:image" content="https://appadaycreator.com/assets/ogp-default.png" />
+
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✍️</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -60,6 +61,17 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
         .result-value { font-size: 36px; font-weight: 700; color: #6366F1; text-align: center; padding: 16px 0; }
         .badge { display: inline-block; background: #6366F120; color: #6366F1; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        /* フォームエラー表示 */
+        .field-error { display: none; font-size: 12px; color: #dc2626; margin-top: 4px; }
+        .field-error.show { display: block; }
+        input.error { border-color: #dc2626 !important; box-shadow: 0 0 0 3px #dc262622; }
+        /* トースト通知 */
+        #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; z-index: 9999; white-space: nowrap; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        /* 生成文テキストエリア */
+        #output { resize: vertical; min-height: 120px; font-size: 14px; line-height: 1.8; color: #333; white-space: pre-wrap; background: #f8f9ff; border: 1px solid #e0e7ff; border-radius: 8px; padding: 16px; font-family: inherit; }
+        /* 文字数カウンター */
+        .char-count { font-size: 12px; color: #6b7280; margin-top: 6px; }
         @media (max-width: 480px) {
             .site-header { padding: 24px 16px; }
             .site-header h1 { font-size: 20px; }
@@ -69,7 +81,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
         }
         /* ── サービス固有CSS ── */
 
-    
+
 @media print{
   header,footer,nav,button,.no-print,
   [class*="share"],[class*="affiliate"],[id*="share"],
@@ -86,6 +98,9 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 
     <a href="#main-content" class="sr-only" style="position:absolute;top:8px;left:8px;background:#6366F1;color:white;padding:8px 16px;border-radius:6px;z-index:9999;text-decoration:none;font-size:14px;" tabindex="1">メインコンテンツへスキップ</a>
 
+    <!-- トースト通知要素 -->
+    <div id="toast" role="status" aria-live="polite"></div>
+
     <header class="site-header" role="banner">
         <div class="emoji" aria-hidden="true">✍️</div>
         <h1>自己紹介文ジェネレーター</h1>
@@ -98,30 +113,36 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 
         <div class="card">
           <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">✍️ 自己紹介文ジェネレーター</h2>
-          <label>氏名（ニックネームでもOK）</label>
-          <input type="text" id="name" placeholder="山田 太郎" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
-          <label style="margin-top:12px;">職種・業種</label>
-          <input type="text" id="job" placeholder="Webエンジニア / IT業界" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
-          <label style="margin-top:12px;">経歴（年数）</label>
-          <input type="number" id="years" placeholder="5" min="0" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
-          <label style="margin-top:12px;">強み・得意なこと</label>
-          <input type="text" id="strength" placeholder="課題解決・チームリーダー経験" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
-          <label style="margin-top:12px;">趣味・関心</label>
-          <input type="text" id="hobby" placeholder="旅行・読書・筋トレ" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
-          <label style="margin-top:12px;">用途</label>
-          <select id="usage" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;margin-top:4px;">
+          <label for="name">氏名（ニックネームでもOK）<span style="color:#dc2626;margin-left:2px;">*</span></label>
+          <input type="text" id="name" placeholder="山田 太郎" autocomplete="name">
+          <div class="field-error" id="name-error">氏名を入力してください</div>
+          <label for="job">職種・業種<span style="color:#dc2626;margin-left:2px;">*</span></label>
+          <input type="text" id="job" placeholder="Webエンジニア / IT業界" autocomplete="organization-title">
+          <div class="field-error" id="job-error">職種・業種を入力してください</div>
+          <label for="years">経歴（年数）</label>
+          <input type="number" id="years" placeholder="5" min="0">
+          <label for="strength">強み・得意なこと</label>
+          <input type="text" id="strength" placeholder="課題解決・チームリーダー経験">
+          <label for="hobby">趣味・関心</label>
+          <input type="text" id="hobby" placeholder="旅行・読書・筋トレ">
+          <label for="goal">目標・アピールしたいこと</label>
+          <input type="text" id="goal" placeholder="新しい分野で挑戦し成長したい・チームに貢献したい">
+          <label for="usage">用途</label>
+          <select id="usage">
             <option value="job">就活・転職</option>
             <option value="sns">SNSプロフィール</option>
             <option value="internal">社内自己紹介</option>
             <option value="card">名刺・ビジネス交流</option>
           </select>
-          <button class="btn" style="margin-top:20px;" onclick="generate()">自己紹介文を生成する</button>
+          <button type="button" class="btn" style="margin-top:20px;" onclick="generate()">自己紹介文を生成する</button>
         </div>
         <div class="result" id="result" style="margin-top:16px;">
           <div class="card">
             <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:#6366F1;">✅ 生成された自己紹介文</h3>
-            <div id="output" style="font-size:14px;line-height:1.8;color:#333;white-space:pre-wrap;background:#f8f9ff;padding:16px;border-radius:8px;border:1px solid #e0e7ff;"></div>
-            <button onclick="copyText()" style="margin-top:12px;padding:8px 20px;background:#6366F1;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;">📋 コピーする</button>
+            <p style="font-size:12px;color:#6b7280;margin-bottom:8px;">テキストをクリックして直接編集できます</p>
+            <textarea id="output" aria-label="生成された自己紹介文"></textarea>
+            <div class="char-count" id="char-count"></div>
+            <button type="button" onclick="copyText()" style="margin-top:12px;padding:8px 20px;background:#6366F1;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;min-height:40px;">📋 コピーする</button>
           </div>
         </div>
 
@@ -202,50 +223,162 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
     </footer>
 
     <script>
-    // ★ここだけ実装（約10行）★
-    function getInputs(){
-      const name = document.getElementById('name')?.value.trim() || '';
-      const job = document.getElementById('job')?.value.trim() || '';
-      const years = document.getElementById('years')?.value || '';
-      const strength = document.getElementById('strength')?.value.trim() || '';
-      const hobby = document.getElementById('hobby')?.value.trim() || '';
-      const usage = document.getElementById('usage')?.value || 'job';
-      if(!name || !job) { alert('氏名と職種を入力してください'); return null; }
-      return { name, job, years, strength, hobby, usage };
+    const STORAGE_KEY = 'self-intro-inputs';
+
+    /* 用途別の文字数上限参考値 */
+    const charLimits = {
+      job:      { label: '就活ES目安', limit: 400 },
+      sns:      { label: 'X(Twitter)プロフィール上限', limit: 160 },
+      internal: { label: '社内自己紹介目安', limit: 300 },
+      card:     { label: '名刺・交流目安', limit: 200 },
+    };
+
+    /* トースト表示 */
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
     }
-    function buildOutput(inp){
+
+    /* フォームエラー表示制御 */
+    function setError(id, show) {
+      const input = document.getElementById(id);
+      const err = document.getElementById(id + '-error');
+      if (!input || !err) return;
+      if (show) { input.classList.add('error'); err.classList.add('show'); }
+      else { input.classList.remove('error'); err.classList.remove('show'); }
+    }
+
+    /* 入力値を取得しバリデーション */
+    function getInputs() {
+      const name = document.getElementById('name').value.trim();
+      const job = document.getElementById('job').value.trim();
+      const years = document.getElementById('years').value;
+      const strength = document.getElementById('strength').value.trim();
+      const hobby = document.getElementById('hobby').value.trim();
+      const goal = document.getElementById('goal').value.trim();
+      const usage = document.getElementById('usage').value || 'job';
+      setError('name', !name);
+      setError('job', !job);
+      if (!name || !job) return null;
+      return { name, job, years, strength, hobby, goal, usage };
+    }
+
+    /* テンプレート生成 */
+    function buildOutput(inp) {
       const yearsText = inp.years ? `${inp.years}年` : '';
+      const goalPart = inp.goal ? `今後は${inp.goal}ことを目標にしています。` : '';
       const templates = {
-        job: `はじめまして、${inp.name}と申します。
-    ${inp.job}を${yearsText}担当しており、${inp.strength || '幅広い業務'}を得意としております。
-    これまでの経験を活かし、貢献できるよう努めてまいります。
-    趣味は${inp.hobby || '様々なことへの学び'}で、日々インプットを大切にしています。どうぞよろしくお願いいたします。`,
-        sns: `${inp.name} /${inp.job}
-    ${yearsText ? yearsText + 'の経験を持つ' : ''}${inp.job}です。
-    得意なこと：${inp.strength || 'ものごとを深く追求すること'}
-    趣味：${inp.hobby || '幅広いことへの挑戦'}
-    お気軽にフォロー・DMどうぞ！`,
-        internal: `${inp.name}と申します。${inp.job}${yearsText ? 'を' + yearsText : ''}経験しており、${inp.strength || '様々な業務'}を得意としています。趣味は${inp.hobby || '読書'}で、仕事以外でも幅広くインプットしています。皆さんと一緒に働けることを楽しみにしています。どうぞよろしくお願いします！`,
-        card: `${inp.name}（${inp.job}）
-    ${yearsText ? yearsText + 'の実績' : '豊富な実績'}
-    専門：${inp.strength || '幅広い領域'}
-    関心：${inp.hobby || '様々な分野'}
-    何かお役に立てることがあれば、お気軽にお声がけください。`,
+        job: [
+          `はじめまして、${inp.name}と申します。`,
+          `${inp.job}を${yearsText ? yearsText + ' ' : ''}担当しており、${inp.strength || '幅広い業務'}を得意としております。`,
+          `これまでの経験を活かし、貢献できるよう努めてまいります。`,
+          goalPart,
+          `趣味は${inp.hobby || '様々なことへの学び'}で、日々インプットを大切にしています。どうぞよろしくお願いいたします。`,
+        ].filter(Boolean).join('\n'),
+        sns: [
+          `${inp.name} ／ ${inp.job}`,
+          `${yearsText ? yearsText + 'の経験を持つ' : ''}${inp.job}です。`,
+          `得意なこと：${inp.strength || 'ものごとを深く追求すること'}`,
+          `趣味：${inp.hobby || '幅広いことへの挑戦'}`,
+          goalPart,
+          `お気軽にフォロー・DMどうぞ！`,
+        ].filter(Boolean).join('\n'),
+        internal: [
+          `${inp.name}と申します。${inp.job}${yearsText ? 'を' + yearsText : ''}経験しており、${inp.strength || '様々な業務'}を得意としています。`,
+          `趣味は${inp.hobby || '読書'}で、仕事以外でも幅広くインプットしています。`,
+          goalPart,
+          `皆さんと一緒に働けることを楽しみにしています。どうぞよろしくお願いします！`,
+        ].filter(Boolean).join(' '),
+        card: [
+          `${inp.name}（${inp.job}）`,
+          `${yearsText ? yearsText + 'の実績' : '豊富な実績'}`,
+          `専門：${inp.strength || '幅広い領域'}`,
+          `関心：${inp.hobby || '様々な分野'}`,
+          goalPart,
+          `何かお役に立てることがあれば、お気軽にお声がけください。`,
+        ].filter(Boolean).join('\n'),
       };
       return templates[inp.usage] || templates.job;
     }
-    function copyText(){
-      const text = document.getElementById('output')?.textContent || '';
-      navigator.clipboard.writeText(text).then(() => alert('コピーしました！'));
+
+    /* 文字数カウンター更新 */
+    function updateCharCount(text, usage) {
+      const el = document.getElementById('char-count');
+      if (!el) return;
+      const len = text.length;
+      const info = charLimits[usage] || charLimits.job;
+      const over = len > info.limit;
+      el.innerHTML = `${len}文字 <span style="color:${over ? '#dc2626' : '#6b7280'};">／ ${info.label}: ${info.limit}字${over ? ' ⚠ 超過' : ''}</span>`;
     }
-    // ★以下変更不要★
-    document.addEventListener('DOMContentLoaded',()=>{});
-    function generate(){
-      const inputs=getInputs(); if(!inputs) return;
-      document.getElementById('output').textContent=buildOutput(inputs);
+
+    /* テキストコピー */
+    function copyText() {
+      const text = document.getElementById('output').value || '';
+      navigator.clipboard.writeText(text).then(() => showToast('✅ コピーしました！'));
+    }
+
+    /* localStorage に入力値を保存 */
+    function saveToStorage(inp) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(inp)); } catch(e) {}
+    }
+
+    /* localStorage から復元 */
+    function restoreFromStorage() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (!saved) return;
+        ['name','job','years','strength','hobby','goal'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && saved[id] != null) el.value = saved[id];
+        });
+        if (saved.usage) {
+          const sel = document.getElementById('usage');
+          if (sel) sel.value = saved.usage;
+        }
+      } catch(e) {}
+    }
+
+    /* テキストエリアの高さを内容に合わせる */
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+
+    /* 生成実行 */
+    function generate() {
+      const inputs = getInputs();
+      if (!inputs) return;
+      const text = buildOutput(inputs);
+      const outputEl = document.getElementById('output');
+      outputEl.value = text;
+      autoResize(outputEl);
+      updateCharCount(text, inputs.usage);
       document.getElementById('result').classList.add('show');
-      document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      saveToStorage(inputs);
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      restoreFromStorage();
+      /* 必須フィールドの入力時にエラーをクリア */
+      ['name', 'job'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => setError(id, false));
+      });
+      /* 生成文の編集時に文字数カウンターを更新 */
+      const outputEl = document.getElementById('output');
+      if (outputEl) {
+        outputEl.addEventListener('input', () => {
+          const usage = document.getElementById('usage').value || 'job';
+          updateCharCount(outputEl.value, usage);
+          autoResize(outputEl);
+        });
+      }
+    });
     </script>
 </body>
 </html>
